@@ -159,9 +159,8 @@ handle_cast({ring_update, R}, State) ->
     %% and broadcast out current status to those peers.
     {ok , PeersWithoutRing} = application:get_env(peers_without_ring),
     Peers0 = ordsets:from_list(riak_core_ring:all_members(R)),
-    Peers1 = ordsets:del_element(node(), Peers0),
-
-    Peers = ordsets:union([PeersWithoutRing, Peers1]),
+    Peers1 = ordsets:union([PeersWithoutRing, Peers0]),
+    Peers = ordsets:del_element(node(), Peers1),
 
     S2 = peers_update(Peers, State),
     {noreply, update_avsn(S2)};
